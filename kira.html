@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kira</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF8F3;
+    --warm-white: #FEFCFA;
+    --blush: #F2D4C8;
+    --blush-dark: #E8B9A5;
+    --sage: #B8C9B0;
+    --sage-dark: #8FAF85;
+    --terracotta: #C97B5A;
+    --terracotta-light: #E8A882;
+    --stone: #8A7E74;
+    --stone-light: #C4B8B0;
+    --charcoal: #2C2420;
+    --text: #3D3330;
+    --text-light: #7A6E68;
+    --text-lighter: #B0A49E;
+    --water: #A8C4D4;
+    --water-light: #D4E8F0;
+    --gold: #D4A853;
+    --success: #7AB87A;
+    --warning: #E8B85A;
+    --danger: #C97878;
+    --shadow-soft: 0 4px 24px rgba(44,36,32,0.08);
+    --shadow-card: 0 2px 12px rgba(44,36,32,0.06);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* SETUP SCREEN */
+  #setup-screen {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #FDF8F3 0%, #F5E8DF 50%, #EDD8CC 100%);
+    padding: 60px 28px 40px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .setup-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    color: var(--terracotta);
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+
+  .setup-subtitle {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 300;
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  .setup-form { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .form-input {
+    background: var(--warm-white);
+    border: 1.5px solid rgba(44,36,32,0.1);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-input:focus { border-color: var(--terracotta); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .toggle-group { display: flex; gap: 8px; }
+  .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid rgba(44,36,32,0.1);
+    border-radius: var(--radius-sm);
+    background: var(--warm-white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .toggle-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: white;
+    font-weight: 500;
+  }
+
+  .setup-cta {
+    margin-top: 24px;
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(201,123,90,0.3);
+  }
+  .setup-cta:active { transform: scale(0.98); }
+
+  /* MAIN APP */
+  #app { display: none; min-height: 100vh; padding-bottom: 90px; }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--warm-white);
+    padding: 52px 24px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 rgba(44,36,32,0.06);
+  }
+
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--terracotta);
+    letter-spacing: -0.5px;
+  }
+
+  .topbar-date {
+    font-size: 12px;
+    color: var(--text-lighter);
+    font-weight: 300;
+  }
+
+  .topbar-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blush);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: var(--warm-white);
+    display: flex;
+    padding: 12px 0 28px;
+    box-shadow: 0 -1px 0 rgba(44,36,32,0.06);
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.2s;
+  }
+
+  .nav-icon { font-size: 22px; transition: transform 0.2s; }
+  .nav-label { font-size: 10px; color: var(--text-lighter); font-weight: 400; letter-spacing: 0.3px; }
+  .nav-item.active .nav-label { color: var(--terracotta); font-weight: 500; }
+  .nav-item.active .nav-icon { transform: scale(1.1); }
+
+  /* PAGES */
+  .page { display: none; padding: 20px 20px 0; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--warm-white);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-lighter);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 14px;
+  }
+
+  /* HOME PAGE */
+  .greeting {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .greeting span { color: var(--terracotta); font-style: italic; }
+
+  .greeting-sub {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  /* CALORIE RING */
+  .calorie-card {
+    background: linear-gradient(135deg, var(--warm-white) 0%, #FDF0E8 100%);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ring-container { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+
+  .ring-svg { transform: rotate(-90deg); }
+
+  .ring-bg { fill: none; stroke: #F0E4DA; stroke-width: 8; }
+  .ring-fill { fill: none; stroke: var(--terracotta); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+
+  .ring-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .ring-kcal {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .ring-label { font-size: 9px; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .calorie-details { flex: 1; }
+
+  .cal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(44,36,32,0.05);
+  }
+  .cal-row:last-child { border-bottom: none; }
+
+  .cal-label { font-size: 12px; color: var(--text-light); display: flex; align-items: center; gap: 6px; }
+  .cal-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .cal-value { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  /* ALLATTAMENTO BANNER */
+  .nursing-banner {
+    background: linear-gradient(135deg, #FFF0E8, #FFE4D4);
+    border: 1.5px solid var(--blush-dark);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nursing-banner .icon { font-size: 20px; }
+  .nursing-text { flex: 1; }
+  .nursing-text strong { font-size: 12px; color: var(--terracotta); display: block; }
+  .nursing-text span { font-size: 11px; color: var(--text-light); }
+
+  /* WATER TRACKER */
+  .water-card {
+    background: linear-gradient(135deg, var(--water-light), #EAF4FA);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+
+  .water-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .water-title { font-size: 11px; font-weight: 500; color: var(--water); text-transform: uppercase; letter-spacing: 0.8px; }
+  .water-amount { font-size: 20px; font-weight: 600; color: #5A8FA8; }
+  .water-target { font-size: 11px; color: var(--text-lighter); }
+
+  .water-glasses { display: flex; gap: 8px; flex-wrap: wrap; }
+  .glass {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.5);
+    border: 1.5px solid rgba(90,143,168,0.2);
+  }
+  .glass.filled { background: var(--water); border-color: var(--water); }
+  .glass:active { transform: scale(0.9); }
+
+  /* PASTI LOG */
+  .meal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(44,36,32,0.05);
+    cursor: pointer;
+  }
+  .meal-item:last-child { border-bottom: none; }
+
+  .meal-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .meal-info { flex: 1; }
+  .meal-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .meal-time { font-size: 11px; color: var(--text-lighter); margin-top: 2px; }
+  .meal-kcal { font-size: 14px; font-weight: 500; color: var(--terracotta); }
+
+  /* TAPPE */
+  .tappa-card {
+    background: linear-gradient(135deg, #FFF8F0, #FFF0E4);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+    border: 1.5px solid rgba(201,123,90,0.15);
+  }
+
+  .tappa-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .tappa-title { font-size: 11px; font-weight: 500; color: var(--terracotta); text-transform: uppercase; letter-spacing: 0.8px; }
+  .tappa-badge { background: var(--gold); color: white; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
+
+  .progress-track {
+    height: 8px;
+    background: rgba(201,123,90,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta-light), var(--terracotta));
+    border-radius: 4px;
+    transition: width 0.8s ease;
+  }
+
+  .tappa-info { display: flex; justify-content: space-between; align-items: center; }
+  .tappa-current { font-size: 20px; font-weight: 600; color: var(--text); }
+  .tappa-target { font-size: 12px; color: var(--text-light); }
+
+  .milestones { display: flex; gap: 6px; margin-top: 14px; overflow-x: auto; padding-bottom: 4px; }
+  .milestone {
+    flex-shrink: 0;
+    background: var(--warm-white);
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-align: center;
+    border: 1.5px solid rgba(44,36,32,0.08);
+    min-width: 64px;
+    transition: all 0.2s;
+  }
+  .milestone.reached { background: var(--terracotta); border-color: var(--terracotta); }
+  .milestone.reached .ms-kg { color: white; }
+  .milestone.reached .ms-label { color: rgba(255,255,255,0.8); }
+  .milestone .ms-icon { font-size: 16px; margin-bottom: 2px; }
+  .milestone .ms-kg { font-size: 13px; font-weight: 600; color: var(--text); }
+  .milestone .ms-label { font-size: 9px; color: var(--text-lighter); }
+
+  /* ADD BUTTONS */
+  .fab-area { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+
+  .fab-btn {
+    background: var(--warm-white);
+    border: 1.5px solid rgba(44,36,32,0.08);
+    border-radius: var(--radius-sm);
+    padding: 16px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .fab-btn:active { transform: scale(0.97); background: var(--cream); }
+
+  .fab-icon { font-size: 24px; }
+  .fab-text strong { display: block; font-size: 13px; color: var(--text); font-weight: 500; }
+  .fab-text span { font-size: 11px; color: var(--text-lighter); }
+
+  /* PASTO PAGE */
+  .photo-area {
+    background: var(--cream);
+    border: 2px dashed var(--stone-light);
+    border-radius: var(--radius);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-area:active { border-color: var(--terracotta); background: #FFF0E8; }
+  .photo-area img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+  .photo-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(44,36,32,0.7));
+    padding: 16px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    display: none;
+  }
+  .photo-overlay.visible { display: block; }
+  .photo-overlay span { color: white; font-size: 12px; }
+
+  .photo-icon { font-size: 36px; margin-bottom: 8px; }
+  .photo-text { font-size: 13px; color: var(--text-lighter); }
+
+  #food-input { display: none; }
+
+  .ai-result {
+    background: linear-gradient(135deg, #F8FFF5, #EFF9EA);
+    border: 1.5px solid var(--sage);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .ai-result.visible { display: block; }
+  .ai-result-title { font-size: 11px; color: var(--sage-dark); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .ai-result-food { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .ai-result-kcal { font-size: 28px; font-weight: 600; color: var(--terracotta); margin-bottom: 8px; }
+  .ai-result-kcal span { font-size: 14px; color: var(--text-lighter); font-weight: 400; }
+  .ai-result-detail { font-size: 12px; color: var(--text-light); line-height: 1.6; }
+
+  .loading-ai {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+  }
+  .loading-ai.visible { display: flex; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--blush); border-top-color: var(--terracotta); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* MEAL TYPE SELECTOR */
+  .meal-types { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+  .meal-type-btn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border: 1.5px solid rgba(44,36,32,0.1);
+    border-radius: 20px;
+    background: var(--warm-white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .meal-type-btn.active { background: var(--terracotta); border-color: var(--terracotta); color: white; font-weight: 500; }
+
+  /* ATTIVITÀ PAGE */
+  .activity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .activity-btn {
+    background: var(--warm-white);
+    border: 1.5px solid rgba(44,36,32,0.08);
+    border-radius: var(--radius-sm);
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .activity-btn.selected { background: var(--sage); border-color: var(--sage-dark); }
+  .activity-btn .act-icon { font-size: 28px; margin-bottom: 6px; }
+  .activity-btn .act-name { font-size: 12px; color: var(--text); font-weight: 500; }
+  .activity-btn .act-kcal { font-size: 10px; color: var(--text-lighter); margin-top: 2px; }
+  .activity-btn:active { transform: scale(0.97); }
+
+  /* SUGGERIMENTI PAGE */
+  .suggest-day {
+    background: linear-gradient(135deg, var(--warm-white), #FFF8F2);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+
+  .suggest-meal {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(44,36,32,0.05);
+  }
+  .suggest-meal:last-child { border-bottom: none; }
+
+  .suggest-meal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .suggest-meal-type { font-size: 11px; font-weight: 500; color: var(--terracotta); text-transform: uppercase; letter-spacing: 0.8px; }
+  .suggest-meal-kcal { font-size: 12px; color: var(--text-lighter); }
+  .suggest-meal-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .suggest-meal-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+
+  .suggest-btn {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 16px;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(201,123,90,0.25);
+  }
+  .suggest-btn:active { transform: scale(0.98); }
+
+  /* PROFILO PAGE */
+  .profile-header {
+    text-align: center;
+    padding: 20px 0 24px;
+  }
+
+  .profile-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blush), var(--terracotta-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 12px;
+  }
+
+  .profile-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+
+  .stat-card {
+    background: var(--warm-white);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+  .stat-value { font-size: 20px; font-weight: 600; color: var(--text); }
+  .stat-unit { font-size: 10px; color: var(--text-lighter); }
+  .stat-label { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(44,36,32,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--warm-white);
+    border-radius: 28px 28px 0 0;
+    padding: 24px 24px 48px;
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .modal-handle { width: 40px; height: 4px; background: var(--stone-light); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text); margin-bottom: 20px; }
+
+  .modal-btn {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 16px;
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+  .modal-btn.secondary {
+    background: var(--cream);
+    color: var(--text);
+    margin-top: 8px;
+  }
+
+  /* VOICE BTN */
+  .voice-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1.5px solid rgba(44,36,32,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .voice-btn.recording { background: var(--terracotta); border-color: var(--terracotta); animation: pulse 1s ease infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,123,90,0.4); } 50% { box-shadow: 0 0 0 10px rgba(201,123,90,0); } }
+
+  .input-row { display: flex; gap: 10px; align-items: center; }
+  .input-row .form-input { flex: 1; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text);
+  }
+  .section-link { font-size: 12px; color: var(--terracotta); cursor: pointer; }
+
+  /* NOTIFICA */
+  .notifica {
+    background: linear-gradient(135deg, #FFF8E8, #FFF2D4);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .notifica-icon { font-size: 20px; }
+  .notifica-text strong { font-size: 12px; color: #8A6A00; display: block; }
+  .notifica-text span { font-size: 11px; color: var(--text-light); }
+
+  /* PESO LOG */
+  .peso-trend {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 60px;
+    padding: 0 4px;
+    margin-bottom: 10px;
+  }
+  .peso-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .peso-bar { width: 100%; background: var(--blush); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.5s ease; }
+  .peso-bar.current { background: var(--terracotta); }
+  .peso-bar-label { font-size: 9px; color: var(--text-lighter); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 30px 20px; color: var(--text-lighter); }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-state p { font-size: 13px; line-height: 1.5; }
+
+  /* BADGE */
+  .badge { display: inline-block; background: var(--cream); border: 1px solid rgba(44,36,32,0.1); border-radius: 20px; padding: 3px 10px; font-size: 11px; color: var(--text-light); }
+  .badge.green { background: #F0FAF0; border-color: var(--sage); color: var(--sage-dark); }
+  .badge.orange { background: #FFF4EC; border-color: var(--terracotta-light); color: var(--terracotta); }
+
+  /* STORICO PAGE */
+  .day-summary {
+    background: var(--warm-white);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+  }
+  .day-date { font-size: 13px; font-weight: 500; color: var(--text); }
+  .day-sub { font-size: 11px; color: var(--text-lighter); margin-top: 2px; }
+  .day-kcal-badge { margin-left: auto; text-align: right; }
+  .day-kcal-num { font-size: 16px; font-weight: 600; color: var(--terracotta); }
+  .day-kcal-diff { font-size: 10px; color: var(--text-lighter); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen">
+  <div class="setup-logo">Kira</div>
+  <div class="setup-subtitle">Il tuo spazio personale per ritrovare il tuo equilibrio, un giorno alla volta.</div>
+
+  <div class="setup-form">
+    <div class="form-group">
+      <div class="form-label">Come ti chiami?</div>
+      <input class="form-input" id="s-nome" type="text" placeholder="Il tuo nome" value="Elena">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Età</div>
+        <input class="form-input" id="s-eta" type="number" placeholder="30" min="18" max="80">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Altezza (cm)</div>
+        <input class="form-input" id="s-altezza" type="number" placeholder="165" min="140" max="210">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Peso attuale (kg)</div>
+        <input class="form-input" id="s-peso" type="number" placeholder="65" min="40" max="150" step="0.1">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Peso obiettivo (kg)</div>
+        <input class="form-input" id="s-peso-target" type="number" placeholder="58" min="40" max="150" step="0.1">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Data obiettivo</div>
+      <input class="form-input" id="s-data-target" type="date">
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Stai allattando?</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="allatt-si" onclick="setAllatt(true)">Sì</button>
+        <button class="toggle-btn" id="allatt-no" onclick="setAllatt(false)">No</button>
+      </div>
+    </div>
+
+    <div id="allatt-fine-wrap" class="form-group">
+      <div class="form-label">Fine allattamento prevista</div>
+      <input class="form-input" id="s-fine-allatt" type="month" placeholder="2026-09">
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Livello di attività base</div>
+      <select class="form-input" id="s-attivita">
+        <option value="1.2">Sedentaria (poco movimento)</option>
+        <option value="1.375" selected>Leggermente attiva (qualche sport)</option>
+        <option value="1.55">Moderatamente attiva (sport regolare)</option>
+        <option value="1.725">Molto attiva (sport intenso)</option>
+      </select>
+    </div>
+
+    <button class="setup-cta" onclick="saveSetup()">Inizia con Kira ✦</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-logo">Kira</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="topbar-avatar" onclick="navTo('profilo')">🌸</div>
+  </div>
+
+  <!-- PAGES -->
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+
+    <div class="greeting">
+      Ciao, <span id="greeting-name">Elena</span> 👋
+    </div>
+    <div class="greeting-sub" id="greeting-sub">Come stai oggi?</div>
+
+    <!-- Nursing banner -->
+    <div class="nursing-banner" id="nursing-banner">
+      <div class="icon">🤱</div>
+      <div class="nursing-text">
+        <strong>Allattamento attivo</strong>
+        <span id="nursing-text">Calorie extra incluse nel tuo piano</span>
+      </div>
+    </div>
+
+    <!-- Calorie ring -->
+    <div class="calorie-card">
+      <div class="ring-container">
+        <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="40"/>
+          <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="40"
+            stroke-dasharray="251.2"
+            stroke-dashoffset="251.2"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-kcal" id="ring-remaining">—</div>
+          <div class="ring-label">rimanenti</div>
+        </div>
+      </div>
+      <div class="calorie-details">
+        <div class="cal-row">
+          <div class="cal-label"><div class="cal-dot" style="background:var(--text-lighter)"></div>Obiettivo</div>
+          <div class="cal-value" id="cal-target">—</div>
+        </div>
+        <div class="cal-row">
+          <div class="cal-label"><div class="cal-dot" style="background:var(--terracotta)"></div>Assunto</div>
+          <div class="cal-value" id="cal-eaten">0 kcal</div>
+        </div>
+        <div class="cal-row">
+          <div class="cal-label"><div class="cal-dot" style="background:var(--sage-dark)"></div>Bruciato</div>
+          <div class="cal-value" id="cal-burned">0 kcal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tappa peso -->
+    <div class="tappa-card">
+      <div class="tappa-header">
+        <div class="tappa-title">🏔 Il tuo percorso</div>
+        <div class="tappa-badge" id="tappa-badge">Tappa 1</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="tappa-info">
+        <div>
+          <div class="tappa-current" id="tappa-current">— kg</div>
+          <div class="tappa-target" id="tappa-target">obiettivo: — kg</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--text-light)" id="tappa-mancano">— kg al traguardo</div>
+          <div style="font-size:11px;color:var(--text-lighter)" id="tappa-persi">persi finora</div>
+        </div>
+      </div>
+      <div class="milestones" id="milestones-row"></div>
+    </div>
+
+    <!-- Acqua -->
+    <div class="water-card">
+      <div class="water-header">
+        <div>
+          <div class="water-title">💧 Acqua</div>
+          <div class="water-target" id="water-target-text">Obiettivo: 2.5L</div>
+        </div>
+        <div>
+          <div class="water-amount" id="water-amount">0 ml</div>
+        </div>
+      </div>
+      <div class="water-glasses" id="water-glasses"></div>
+    </div>
+
+    <!-- Add buttons -->
+    <div class="fab-area">
+      <button class="fab-btn" onclick="navTo('pasto')">
+        <div class="fab-icon">🍽</div>
+        <div class="fab-text">
+          <strong>Aggiungi pasto</strong>
+          <span>Foto o manuale</span>
+        </div>
+      </button>
+      <button class="fab-btn" onclick="navTo('attivita')">
+        <div class="fab-icon">🏋️</div>
+        <div class="fab-text">
+          <strong>Attività</strong>
+          <span>Registra sport</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Pasti di oggi -->
+    <div class="card">
+      <div class="section-header">
+        <div class="card-title" style="margin:0">Pasti di oggi</div>
+        <div class="section-link" onclick="navTo('storico')">Storico →</div>
+      </div>
+      <div id="oggi-pasti-list">
+        <div class="empty-state">
+          <div class="empty-icon">🥗</div>
+          <p>Nessun pasto registrato oggi.<br>Aggiungi il tuo primo pasto!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attività di oggi -->
+    <div class="card" id="oggi-attivita-card" style="display:none">
+      <div class="card-title">Attività di oggi</div>
+      <div id="oggi-attivita-list"></div>
+    </div>
+
+  </div>
+
+  <!-- PASTO PAGE -->
+  <div class="page" id="page-pasto">
+    <div class="section-header">
+      <div class="section-title">Aggiungi pasto</div>
+    </div>
+
+    <!-- Tipo pasto -->
+    <div class="meal-types">
+      <button class="meal-type-btn active" onclick="selectMealType(this,'Colazione')">🌅 Colazione</button>
+      <button class="meal-type-btn" onclick="selectMealType(this,'Spuntino')">🍎 Spuntino</button>
+      <button class="meal-type-btn" onclick="selectMealType(this,'Pranzo')">☀️ Pranzo</button>
+      <button class="meal-type-btn" onclick="selectMealType(this,'Cena')">🌙 Cena</button>
+      <button class="meal-type-btn" onclick="selectMealType(this,'Extra')">✨ Extra</button>
+    </div>
+
+    <!-- Foto area -->
+    <div class="photo-area" id="photo-area" onclick="triggerPhoto()">
+      <input type="file" id="food-input" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+      <div class="photo-icon">📷</div>
+      <div class="photo-text">Fai una foto al piatto</div>
+      <div class="photo-text" style="font-size:11px;color:var(--text-lighter);margin-top:4px">Kira stima le calorie automaticamente</div>
+      <div class="photo-overlay" id="photo-overlay">
+        <span id="photo-label">Foto caricata</span>
+      </div>
+    </div>
+
+    <!-- Loading AI -->
+    <div class="loading-ai" id="loading-ai">
+      <div class="spinner"></div>
+      <span style="font-size:13px;color:var(--text-light)">Sto analizzando il piatto...</span>
+    </div>
+
+    <!-- AI Result -->
+    <div class="ai-result" id="ai-result">
+      <div class="ai-result-title">✦ Kira ha analizzato</div>
+      <div class="ai-result-food" id="ai-food-name"></div>
+      <div class="ai-result-kcal" id="ai-kcal"></div>
+      <div class="ai-result-detail" id="ai-detail"></div>
+    </div>
+
+    <!-- Manuale -->
+    <div class="card">
+      <div class="card-title">Inserimento manuale</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <div class="form-label">Descrizione pasto</div>
+        <div class="input-row">
+          <input class="form-input" id="pasto-nome" type="text" placeholder="Es. pasta al pomodoro...">
+          <button class="voice-btn" id="voice-pasto" onclick="startVoice('pasto-nome', 'voice-pasto')">🎙</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Calorie (kcal)</div>
+        <div class="input-row">
+          <input class="form-input" id="pasto-kcal" type="number" placeholder="350">
+          <button class="voice-btn" id="voice-kcal" onclick="startVoice('pasto-kcal', 'voice-kcal')">🎙</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="modal-btn" onclick="savePasto()">Salva pasto</button>
+    <button class="modal-btn secondary" onclick="navTo('home')" style="margin-top:8px">Annulla</button>
+  </div>
+
+  <!-- ATTIVITÀ PAGE -->
+  <div class="page" id="page-attivita">
+    <div class="section-header">
+      <div class="section-title">Attività fisica</div>
+    </div>
+
+    <div class="activity-grid" id="activity-grid">
+      <div class="activity-btn" onclick="selectActivity(this,'Sala pesi','🏋️',6)">
+        <div class="act-icon">🏋️</div>
+        <div class="act-name">Sala pesi</div>
+        <div class="act-kcal">~6 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Corsa','🏃‍♀️',9)">
+        <div class="act-icon">🏃‍♀️</div>
+        <div class="act-name">Corsa</div>
+        <div class="act-kcal">~9 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Camminata','🚶‍♀️',4)">
+        <div class="act-icon">🚶‍♀️</div>
+        <div class="act-name">Camminata</div>
+        <div class="act-kcal">~4 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Yoga','🧘‍♀️',3)">
+        <div class="act-icon">🧘‍♀️</div>
+        <div class="act-name">Yoga</div>
+        <div class="act-kcal">~3 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Bici','🚴‍♀️',7)">
+        <div class="act-icon">🚴‍♀️</div>
+        <div class="act-name">Bici</div>
+        <div class="act-kcal">~7 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Pilates','💪',4)">
+        <div class="act-icon">💪</div>
+        <div class="act-name">Pilates</div>
+        <div class="act-kcal">~4 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Nuoto','🏊‍♀️',8)">
+        <div class="act-icon">🏊‍♀️</div>
+        <div class="act-name">Nuoto</div>
+        <div class="act-kcal">~8 kcal/min</div>
+      </div>
+      <div class="activity-btn" onclick="selectActivity(this,'Altro','✨',5)">
+        <div class="act-icon">✨</div>
+        <div class="act-name">Altro</div>
+        <div class="act-kcal">~5 kcal/min</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-group" style="margin-bottom:12px">
+        <div class="form-label">Durata (minuti)</div>
+        <div class="input-row">
+          <input class="form-input" id="attivita-durata" type="number" placeholder="45" min="1">
+          <button class="voice-btn" id="voice-durata" onclick="startVoice('attivita-durata','voice-durata')">🎙</button>
+        </div>
+      </div>
+      <div id="attivita-preview" style="display:none;padding:12px;background:var(--cream);border-radius:var(--radius-sm);margin-top:8px">
+        <div style="font-size:13px;color:var(--text-light)">Calorie stimate</div>
+        <div style="font-size:24px;font-weight:600;color:var(--sage-dark)" id="attivita-kcal-preview">— kcal</div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px">
+      <div class="form-label">Note (opzionale)</div>
+      <input class="form-input" id="attivita-note" type="text" placeholder="Es. allenamento gambe...">
+    </div>
+
+    <button class="modal-btn" onclick="saveAttivita()">Salva attività</button>
+    <button class="modal-btn secondary" onclick="navTo('home')" style="margin-top:8px">Annulla</button>
+  </div>
+
+  <!-- SUGGERIMENTI PAGE -->
+  <div class="page" id="page-suggerimenti">
+    <div class="section-header">
+      <div class="section-title">Piano del giorno</div>
+    </div>
+
+    <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;line-height:1.6">
+      Suggerimenti personalizzati per te, pescetariani e bilanciati con il tuo obiettivo.
+    </div>
+
+    <button class="suggest-btn" onclick="generateSuggerimenti()">
+      <span>✦</span> Genera piano per oggi
+    </button>
+
+    <div id="suggest-loading" style="display:none;text-align:center;padding:30px">
+      <div class="spinner" style="margin:0 auto 12px"></div>
+      <div style="font-size:13px;color:var(--text-lighter)">Kira sta pensando al tuo piano...</div>
+    </div>
+
+    <div id="suggest-result" style="display:none"></div>
+  </div>
+
+  <!-- STORICO PAGE -->
+  <div class="page" id="page-storico">
+    <div class="section-header">
+      <div class="section-title">Storico</div>
+    </div>
+
+    <!-- Peso trend -->
+    <div class="card">
+      <div class="card-title">Andamento peso</div>
+      <div class="peso-trend" id="peso-trend"></div>
+      <div style="text-align:center;margin-top:8px">
+        <button class="modal-btn" onclick="openPesoModal()" style="padding:12px;font-size:13px">
+          + Aggiungi peso di oggi
+        </button>
+      </div>
+    </div>
+
+    <!-- Giorni -->
+    <div class="card-title" style="padding:0 4px 8px">Ultimi giorni</div>
+    <div id="storico-list">
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <p>Inizia a registrare i tuoi pasti<br>per vedere lo storico qui.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILO PAGE -->
+  <div class="page" id="page-profilo">
+    <div class="profile-header">
+      <div class="profile-avatar">🌸</div>
+      <div class="profile-name" id="profile-name">Elena</div>
+      <div style="font-size:13px;color:var(--text-lighter)">Il tuo profilo Kira</div>
+    </div>
+
+    <div class="profile-stats" id="profile-stats"></div>
+
+    <div class="card">
+      <div class="card-title">Dettagli</div>
+      <div id="profile-details"></div>
+    </div>
+
+    <div class="card" style="border:1.5px solid rgba(201,123,90,0.2)">
+      <div class="card-title">Aggiornamenti</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <div class="form-label">Peso attuale (kg)</div>
+        <div class="input-row">
+          <input class="form-input" id="update-peso" type="number" step="0.1" placeholder="65.0">
+          <button class="voice-btn" onclick="startVoice('update-peso','')">🎙</button>
+        </div>
+      </div>
+      <button class="modal-btn" onclick="updatePeso()">Aggiorna peso</button>
+    </div>
+
+    <div style="margin-top:14px;margin-bottom:30px">
+      <button class="modal-btn secondary" onclick="resetApp()" style="font-size:13px;color:var(--danger)">
+        Reimposta profilo
+      </button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="navTo('home')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item" id="nav-pasto" onclick="navTo('pasto')">
+      <div class="nav-icon">🍽</div>
+      <div class="nav-label">Pasto</div>
+    </div>
+    <div class="nav-item" id="nav-suggerimenti" onclick="navTo('suggerimenti')">
+      <div class="nav-icon">✦</div>
+      <div class="nav-label">Piano</div>
+    </div>
+    <div class="nav-item" id="nav-storico" onclick="navTo('storico')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Storico</div>
+    </div>
+    <div class="nav-item" id="nav-profilo" onclick="navTo('profilo')">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Profilo</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL PESO -->
+<div class="modal-overlay" id="peso-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Registra peso</div>
+    <div class="form-group" style="margin-bottom:16px">
+      <div class="form-label">Peso di oggi (kg)</div>
+      <div class="input-row">
+        <input class="form-input" id="modal-peso" type="number" step="0.1" placeholder="65.0">
+        <button class="voice-btn" onclick="startVoice('modal-peso','')">🎙</button>
+      </div>
+    </div>
+    <button class="modal-btn" onclick="savePeso()">Salva</button>
+    <button class="modal-btn secondary" onclick="closeModal('peso-modal')">Annulla</button>
+  </div>
+</div>
+
+<script>
+// ========== CONFIG ==========
+const GEMINI_KEY = 'AIzaSyBSE7cRL0UFXLZU-tuqU_2uxXtVKq7b2PU';
+const BACKEND    = 'https://script.google.com/macros/s/AKfycbyZc7y19sFJJ5a3VDw0G07syXkZ5eEtLMo1SU8WfhzNSQAFTKyLlAQvQouxiLldANHq/exec';
+
+// ========== STATE ==========
+let profile = null;
+let todayLog = { pasti: [], attivita: [], acqua: 0 };
+let selectedMealType = 'Colazione';
+let selectedActivity = null;
+let isAllattando = true;
+
+// ========== BACKEND API ==========
+async function backendGet(action) {
+  try {
+    const res = await fetch(`${BACKEND}?action=${action}`);
+    return await res.json();
+  } catch(e) { console.warn('Backend GET error:', e); return null; }
+}
+
+async function backendPost(action, data) {
+  try {
+    const res = await fetch(BACKEND, {
+      method: 'POST',
+      body: JSON.stringify({ action, data })
+    });
+    return await res.json();
+  } catch(e) { console.warn('Backend POST error:', e); return null; }
+}
+
+// ========== INIT ==========
+window.onload = async () => {
+  updateTopbarDate();
+  showLoadingScreen(true);
+
+  // Prima prova dal backend (Sheet)
+  const remoteProfile = await backendGet('getProfile');
+
+  if (remoteProfile && remoteProfile.Nome) {
+    profile = {
+      nome: remoteProfile.Nome,
+      eta: parseInt(remoteProfile['Eta']) || 30,
+      altezza: parseFloat(remoteProfile.Altezza) || 165,
+      pesoIniziale: parseFloat(remoteProfile.PesoIniziale) || 65,
+      pesoCorrente: parseFloat(remoteProfile.PesoCorrente) || 65,
+      pesoTarget: parseFloat(remoteProfile.PesoTarget) || 58,
+      dataTarget: remoteProfile.DataTarget || '',
+      allattando: remoteProfile.Allattando === 'Si',
+      fineAllatt: remoteProfile.FineAllatt || '',
+      tdee: parseInt(remoteProfile.TDEE) || 1800,
+      targetKcal: parseInt(remoteProfile.TargetKcal) || 1500,
+      targetAcqua: remoteProfile.Allattando === 'Si' ? 2500 : 2000,
+      attivitaFactor: 1.375,
+      pesolog: []
+    };
+    const pesoLog = await backendGet('getPeso');
+    if (pesoLog && pesoLog.length) {
+      profile.pesolog = pesoLog.map(p => ({ data: p.data, kg: parseFloat(p.kg) }));
+      const last = pesoLog[pesoLog.length - 1];
+      if (last) profile.pesoCorrente = parseFloat(last.kg);
+    }
+    localStorage.setItem('kira_profile', JSON.stringify(profile));
+    await loadTodayLog();
+    showLoadingScreen(false);
+    showApp();
+  } else {
+    const saved = localStorage.getItem('kira_profile');
+    showLoadingScreen(false);
+    if (saved) {
+      profile = JSON.parse(saved);
+      await loadTodayLog();
+      showApp();
+    } else {
+      const d = new Date();
+      d.setMonth(d.getMonth() + 6);
+      document.getElementById('s-data-target').value = d.toISOString().split('T')[0];
+      const m = new Date();
+      m.setMonth(m.getMonth() + 4);
+      document.getElementById('s-fine-allatt').value = m.toISOString().slice(0,7);
+    }
+  }
+};
+
+function showLoadingScreen(show) {
+  let el = document.getElementById('loading-screen');
+  if (!el && show) {
+    el = document.createElement('div');
+    el.id = 'loading-screen';
+    el.style.cssText = 'position:fixed;inset:0;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;';
+    el.innerHTML = '<div style="font-family:Playfair Display,serif;font-size:48px;color:var(--terracotta)">Kira</div><div class="spinner" style="width:28px;height:28px;border-width:3px"></div><div style="font-size:13px;color:var(--text-lighter)">Caricamento...</div>';
+    document.body.appendChild(el);
+  }
+  if (el) el.style.display = show ? 'flex' : 'none';
+}
+
+function updateTopbarDate() {
+  const d = new Date();
+  const options = { weekday: 'long', day: 'numeric', month: 'long' };
+  document.getElementById('topbar-date').textContent = d.toLocaleDateString('it-IT', options);
+}
+
+// ========== SETUP ==========
+function setAllatt(val) {
+  isAllattando = val;
+  document.getElementById('allatt-si').classList.toggle('active', val);
+  document.getElementById('allatt-no').classList.toggle('active', !val);
+  document.getElementById('allatt-fine-wrap').style.display = val ? 'flex' : 'none';
+}
+
+function saveSetup() {
+  const nome = document.getElementById('s-nome').value.trim() || 'Elena';
+  const eta = parseInt(document.getElementById('s-eta').value) || 30;
+  const altezza = parseFloat(document.getElementById('s-altezza').value) || 165;
+  const peso = parseFloat(document.getElementById('s-peso').value) || 65;
+  const pesoTarget = parseFloat(document.getElementById('s-peso-target').value) || 58;
+  const dataTarget = document.getElementById('s-data-target').value;
+  const fineAllatt = document.getElementById('s-fine-allatt').value;
+  const attivitaFactor = parseFloat(document.getElementById('s-attivita').value) || 1.375;
+
+  // Calcolo TDEE (formula Mifflin-St Jeor femminile)
+  const bmr = 10 * peso + 6.25 * altezza - 5 * eta - 161;
+  let tdee = bmr * attivitaFactor;
+
+  // Allattamento +450 kcal
+  if (isAllattando) tdee += 450;
+
+  // Deficit moderato: -250 se allatta, -400 se non allatta
+  const deficit = isAllattando ? 250 : 400;
+  const targetKcal = Math.round(tdee - deficit);
+
+  // Target acqua: 2.5L allatta, 2L normale
+  const targetAcqua = isAllattando ? 2500 : 2000;
+
+  profile = {
+    nome, eta, altezza,
+    pesoIniziale: peso,
+    pesoCorrente: peso,
+    pesoTarget,
+    dataTarget,
+    allattando: isAllattando,
+    fineAllatt,
+    attivitaFactor,
+    tdee: Math.round(tdee),
+    targetKcal,
+    targetAcqua,
+    dataCreazione: new Date().toISOString(),
+    pesolog: [{ data: today(), kg: peso }]
+  };
+
+  localStorage.setItem('kira_profile', JSON.stringify(profile));
+  saveProfileToSheet();
+  loadTodayLog();
+  showApp();
+}
+
+// ========== APP ==========
+function showApp() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  renderHome();
+  checkNursingTransition();
+}
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+async function loadTodayLog() {
+  // Prima carica dal backend
+  try {
+    const logs = await backendGet('getLogs');
+    if (logs && logs.length) {
+      const t = today();
+      const todayRow = logs.find(r => r.Data === t);
+      if (todayRow) {
+        // Ricostruisci dal log del Sheet
+        const pastiRaw = todayRow.Pasti || '';
+        const attRaw = todayRow.Attivita || '';
+        const pasti = pastiRaw ? pastiRaw.split(' | ').map(p => {
+          const m = p.match(/^(.+):(.+)\((\d+)\)$/);
+          return m ? { tipo: m[1], nome: m[2], kcal: parseInt(m[3]), ora: '' } : null;
+        }).filter(Boolean) : [];
+        const attivita = attRaw ? attRaw.split(' | ').map(a => {
+          const m = a.match(/^(.+) (\d+)min\((\d+)\)$/);
+          return m ? { nome: m[1], icon: '🏋️', durata: parseInt(m[2]), kcal: parseInt(m[3]), ora: '' } : null;
+        }).filter(Boolean) : [];
+        todayLog = { pasti, attivita, acqua: parseInt(todayRow.Acqua_ml) || 0 };
+        localStorage.setItem('kira_today_' + t, JSON.stringify(todayLog));
+        return;
+      }
+    }
+  } catch(e) { console.warn('loadTodayLog remote error:', e); }
+  // Fallback localStorage
+  const saved = localStorage.getItem('kira_today_' + today());
+  if (saved) todayLog = JSON.parse(saved);
+  else todayLog = { pasti: [], attivita: [], acqua: 0 };
+}
+
+function saveTodayLog() {
+  localStorage.setItem('kira_today_' + today(), JSON.stringify(todayLog));
+  saveDayToBackend();
+}
+
+// ========== HOME RENDER ==========
+function renderHome() {
+  if (!profile) return;
+
+  document.getElementById('greeting-name').textContent = profile.nome;
+
+  const h = new Date().getHours();
+  let saluto = h < 12 ? 'Buongiorno' : h < 18 ? 'Buon pomeriggio' : 'Buonasera';
+  document.getElementById('greeting-sub').textContent = saluto + '! Ecco il tuo riepilogo di oggi.';
+
+  // Nursing banner
+  const nursing = document.getElementById('nursing-banner');
+  if (profile.allattando) {
+    nursing.style.display = 'flex';
+    if (profile.fineAllatt) {
+      const fine = new Date(profile.fineAllatt + '-01');
+      const oggi = new Date();
+      const diffMs = fine - oggi;
+      const diffDays = Math.max(0, Math.ceil(diffMs / (1000*60*60*24)));
+      const diffMonths = Math.ceil(diffMs / (1000*60*60*24*30));
+      document.getElementById('nursing-text').textContent =
+        diffDays > 0
+          ? `Fine allattamento tra circa ${diffMonths} mes${diffMonths === 1 ? 'e' : 'i'}`
+          : 'Controlla se sei ancora in periodo di allattamento';
+    }
+  } else {
+    nursing.style.display = 'none';
+  }
+
+  // Calorie
+  const eaten = todayLog.pasti.reduce((s, p) => s + (p.kcal || 0), 0);
+  const burned = todayLog.attivita.reduce((s, a) => s + (a.kcal || 0), 0);
+  const target = profile.targetKcal;
+  const remaining = target - eaten + burned;
+
+  document.getElementById('cal-target').textContent = target + ' kcal';
+  document.getElementById('cal-eaten').textContent = eaten + ' kcal';
+  document.getElementById('cal-burned').textContent = burned + ' kcal';
+  document.getElementById('ring-remaining').textContent = Math.max(0, remaining);
+
+  const pct = Math.min(1, eaten / target);
+  const circ = 251.2;
+  document.getElementById('ring-fill').style.strokeDashoffset = circ - (circ * pct);
+
+  // Tappa
+  renderTappa();
+
+  // Acqua
+  renderAcqua();
+
+  // Pasti
+  renderPastiOggi();
+
+  // Attività
+  renderAttivitaOggi();
+}
+
+function renderTappa() {
+  const pi = profile.pesoIniziale;
+  const pc = profile.pesoCorrente;
+  const pt = profile.pesoTarget;
+
+  document.getElementById('tappa-current').textContent = pc.toFixed(1) + ' kg';
+  document.getElementById('tappa-target').textContent = 'obiettivo: ' + pt + ' kg';
+
+  const totalLoss = pi - pt;
+  const achieved = Math.max(0, pi - pc);
+  const pct = totalLoss > 0 ? Math.min(100, (achieved / totalLoss) * 100) : 0;
+
+  document.getElementById('progress-fill').style.width = pct.toFixed(1) + '%';
+  document.getElementById('tappa-mancano').textContent = Math.max(0, pc - pt).toFixed(1) + ' kg al traguardo';
+  document.getElementById('tappa-persi').textContent = achieved > 0 ? `−${achieved.toFixed(1)} kg persi` : 'Inizia oggi!';
+
+  // Milestones ogni 1kg
+  const row = document.getElementById('milestones-row');
+  row.innerHTML = '';
+  const steps = Math.ceil(totalLoss);
+  for (let i = 1; i <= Math.min(steps, 8); i++) {
+    const targetKg = (pi - i).toFixed(1);
+    const reached = pc <= parseFloat(targetKg);
+    const el = document.createElement('div');
+    el.className = 'milestone' + (reached ? ' reached' : '');
+    el.innerHTML = `<div class="ms-icon">${reached ? '⭐' : '○'}</div><div class="ms-kg">${targetKg}</div><div class="ms-label">Tappa ${i}</div>`;
+    row.appendChild(el);
+  }
+
+  // Badge tappa corrente
+  const tappaNum = Math.floor(achieved) + 1;
+  document.getElementById('tappa-badge').textContent = 'Tappa ' + tappaNum;
+}
+
+function renderAcqua() {
+  const target = profile.targetAcqua;
+  const current = todayLog.acqua || 0;
+  const glasses = Math.round(target / 250); // un bicchiere = 250ml
+
+  document.getElementById('water-amount').textContent = current >= 1000
+    ? (current / 1000).toFixed(1) + ' L'
+    : current + ' ml';
+  document.getElementById('water-target-text').textContent = 'Obiettivo: ' + (target / 1000).toFixed(1) + 'L';
+
+  const container = document.getElementById('water-glasses');
+  container.innerHTML = '';
+  const filled = Math.floor(current / 250);
+  for (let i = 0; i < glasses; i++) {
+    const g = document.createElement('div');
+    g.className = 'glass' + (i < filled ? ' filled' : '');
+    g.textContent = i < filled ? '💧' : '○';
+    g.onclick = () => addWater(i, filled);
+    container.appendChild(g);
+  }
+}
+
+function addWater(idx, filled) {
+  if (idx < filled) {
+    todayLog.acqua = Math.max(0, idx * 250);
+  } else {
+    todayLog.acqua = (idx + 1) * 250;
+  }
+  saveTodayLog();
+  renderAcqua();
+}
+
+function renderPastiOggi() {
+  const list = document.getElementById('oggi-pasti-list');
+  if (!todayLog.pasti.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🥗</div><p>Nessun pasto registrato oggi.</p></div>`;
+    return;
+  }
+  const icons = { 'Colazione': '🌅', 'Pranzo': '☀️', 'Cena': '🌙', 'Spuntino': '🍎', 'Extra': '✨' };
+  list.innerHTML = todayLog.pasti.map((p, i) => `
+    <div class="meal-item">
+      <div class="meal-icon">${icons[p.tipo] || '🍽'}</div>
+      <div class="meal-info">
+        <div class="meal-name">${p.nome}</div>
+        <div class="meal-time">${p.tipo} • ${p.ora}</div>
+      </div>
+      <div class="meal-kcal">${p.kcal} kcal</div>
+    </div>
+  `).join('');
+}
+
+function renderAttivitaOggi() {
+  const card = document.getElementById('oggi-attivita-card');
+  const list = document.getElementById('oggi-attivita-list');
+  if (!todayLog.attivita.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  list.innerHTML = todayLog.attivita.map(a => `
+    <div class="meal-item">
+      <div class="meal-icon">${a.icon}</div>
+      <div class="meal-info">
+        <div class="meal-name">${a.nome}</div>
+        <div class="meal-time">${a.durata} min • ${a.ora}</div>
+      </div>
+      <div class="meal-kcal" style="color:var(--sage-dark)">−${a.kcal} kcal</div>
+    </div>
+  `).join('');
+}
+
+// ========== NAVIGATION ==========
+function navTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+
+  if (page === 'home') renderHome();
+  if (page === 'storico') renderStorico();
+  if (page === 'profilo') renderProfilo();
+}
+
+// ========== PASTO ==========
+function selectMealType(btn, type) {
+  document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMealType = type;
+}
+
+function triggerPhoto() {
+  document.getElementById('food-input').click();
+}
+
+async function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Show preview
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const area = document.getElementById('photo-area');
+    let img = area.querySelector('img');
+    if (!img) { img = document.createElement('img'); area.appendChild(img); }
+    img.src = ev.target.result;
+    area.querySelector('.photo-icon').style.display = 'none';
+    document.querySelectorAll('.photo-text').forEach(el => el.style.display = 'none');
+    document.getElementById('photo-overlay').classList.add('visible');
+    analyzeFood(ev.target.result.split(',')[1]);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function analyzeFood(base64) {
+  document.getElementById('loading-ai').classList.add('visible');
+  document.getElementById('ai-result').classList.remove('visible');
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: `Analizza questo piatto di cibo. Rispondi SOLO in questo formato JSON esatto:
+{"nome":"nome del piatto","kcal":numero_intero,"proteine":numero,"carboidrati":numero,"grassi":numero,"dettaglio":"breve descrizione degli ingredienti principali e stima porzione"}
+Non aggiungere altro testo, solo il JSON.` },
+            { inline_data: { mime_type: 'image/jpeg', data: base64 } }
+          ]
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    document.getElementById('ai-food-name').textContent = parsed.nome;
+    document.getElementById('ai-kcal').innerHTML = `${parsed.kcal} <span>kcal</span>`;
+    document.getElementById('ai-detail').textContent =
+      `Proteine: ${parsed.proteine}g • Carboidrati: ${parsed.carboidrati}g • Grassi: ${parsed.grassi}g\n${parsed.dettaglio}`;
+    document.getElementById('ai-result').classList.add('visible');
+
+    // Autofill
+    document.getElementById('pasto-nome').value = parsed.nome;
+    document.getElementById('pasto-kcal').value = parsed.kcal;
+
+  } catch (err) {
+    document.getElementById('ai-result').innerHTML = `<div class="ai-result-title">⚠️ Errore analisi</div><div style="font-size:13px;color:var(--text-light)">Errore: ${err.message}. Inserisci i dati manualmente.</div>`;
+    document.getElementById('ai-result').classList.add('visible');
+    console.error('Gemini error:', err);
+  }
+
+  document.getElementById('loading-ai').classList.remove('visible');
+}
+
+function savePasto() {
+  const nome = document.getElementById('pasto-nome').value.trim();
+  const kcal = parseInt(document.getElementById('pasto-kcal').value) || 0;
+  if (!nome && !kcal) { alert('Inserisci almeno il nome o le calorie!'); return; }
+
+  const ora = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  todayLog.pasti.push({ nome: nome || 'Pasto', kcal, tipo: selectedMealType, ora, data: today() });
+  saveTodayLog();
+
+  // Reset form
+  document.getElementById('pasto-nome').value = '';
+  document.getElementById('pasto-kcal').value = '';
+  document.getElementById('ai-result').classList.remove('visible');
+  const area = document.getElementById('photo-area');
+  const img = area.querySelector('img');
+  if (img) img.remove();
+  area.querySelector('.photo-icon').style.display = '';
+  document.querySelectorAll('.photo-text').forEach(el => el.style.display = '');
+  document.getElementById('photo-overlay').classList.remove('visible');
+  document.getElementById('food-input').value = '';
+
+  navTo('home');
+}
+
+// ========== ATTIVITÀ ==========
+let selectedActivityData = null;
+
+function selectActivity(btn, nome, icon, kcalMin) {
+  document.querySelectorAll('.activity-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedActivityData = { nome, icon, kcalMin };
+  updateActivityPreview();
+}
+
+function updateActivityPreview() {
+  const dur = parseInt(document.getElementById('attivita-durata').value) || 0;
+  const preview = document.getElementById('attivita-preview');
+  if (selectedActivityData && dur > 0) {
+    const kcal = Math.round(selectedActivityData.kcalMin * dur);
+    document.getElementById('attivita-kcal-preview').textContent = kcal + ' kcal';
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const durInput = document.getElementById('attivita-durata');
+  if (durInput) durInput.addEventListener('input', updateActivityPreview);
+});
+
+function saveAttivita() {
+  if (!selectedActivityData) { alert('Seleziona un\'attività!'); return; }
+  const dur = parseInt(document.getElementById('attivita-durata').value);
+  if (!dur || dur < 1) { alert('Inserisci la durata!'); return; }
+  const kcal = Math.round(selectedActivityData.kcalMin * dur);
+  const ora = new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  const note = document.getElementById('attivita-note').value;
+
+  todayLog.attivita.push({
+    nome: selectedActivityData.nome,
+    icon: selectedActivityData.icon,
+    durata: dur,
+    kcal,
+    ora,
+    note,
+    data: today()
+  });
+  saveTodayLog();
+
+  // Reset
+  document.querySelectorAll('.activity-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('attivita-durata').value = '';
+  document.getElementById('attivita-note').value = '';
+  document.getElementById('attivita-preview').style.display = 'none';
+  selectedActivityData = null;
+
+  navTo('home');
+}
+
+// ========== SUGGERIMENTI ==========
+async function generateSuggerimenti() {
+  document.getElementById('suggest-loading').style.display = 'block';
+  document.getElementById('suggest-result').style.display = 'none';
+
+  const eaten = todayLog.pasti.reduce((s, p) => s + p.kcal, 0);
+  const remaining = profile.targetKcal - eaten;
+  const allatt = profile.allattando ? 'sta allattando, quindi non deve andare troppo a deficit,' : '';
+
+  const prompt = `Crea un piano pasti per il resto della giornata per una donna che ${allatt} è pescetariana (mangia pesce e prodotti del mare, latticini, uova, ma non carne), vuole perdere peso, ha un target di ${profile.targetKcal} kcal al giorno, ha già mangiato ${eaten} kcal oggi, e le rimangono circa ${remaining} kcal.
+
+Rispondi SOLO in questo formato JSON:
+{
+  "totale_suggerito": numero_kcal,
+  "pasti": [
+    {"tipo":"Colazione","nome":"nome piatto","kcal":numero,"descrizione":"breve descrizione"},
+    {"tipo":"Pranzo","nome":"nome piatto","kcal":numero,"descrizione":"breve descrizione"},
+    {"tipo":"Cena","nome":"nome piatto","kcal":numero,"descrizione":"breve descrizione"},
+    {"tipo":"Spuntino","nome":"nome spuntino","kcal":numero,"descrizione":"breve descrizione"}
+  ],
+  "nota": "breve messaggio motivazionale personalizzato"
+}
+Includi solo i pasti ancora da fare nella giornata. Niente testo fuori dal JSON.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    let html = `<div class="suggest-day">`;
+    parsed.pasti.forEach(p => {
+      const icons = { 'Colazione': '🌅', 'Pranzo': '☀️', 'Cena': '🌙', 'Spuntino': '🍎' };
+      html += `<div class="suggest-meal">
+        <div class="suggest-meal-header">
+          <div class="suggest-meal-type">${icons[p.tipo] || '✨'} ${p.tipo}</div>
+          <div class="suggest-meal-kcal">${p.kcal} kcal</div>
+        </div>
+        <div class="suggest-meal-name">${p.nome}</div>
+        <div class="suggest-meal-desc">${p.descrizione}</div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    if (parsed.nota) {
+      html += `<div class="nursing-banner" style="background:linear-gradient(135deg,#F5FFF0,#EDFAE8)">
+        <div class="icon">💚</div>
+        <div class="nursing-text"><strong style="color:var(--sage-dark)">Consiglio di Kira</strong><span>${parsed.nota}</span></div>
+      </div>`;
+    }
+
+    html += `<div style="text-align:center;padding:8px 0"><span class="badge green">Totale suggerito: ${parsed.totale_suggerito} kcal</span></div>`;
+
+    document.getElementById('suggest-result').innerHTML = html;
+    document.getElementById('suggest-result').style.display = 'block';
+
+  } catch (err) {
+    document.getElementById('suggest-result').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Errore: " + err.message + "</p></div>`;
+    document.getElementById('suggest-result').style.display = 'block';
+  }
+
+  document.getElementById('suggest-loading').style.display = 'none';
+}
+
+// ========== STORICO ==========
+async function renderStorico() {
+  renderPesoTrend();
+  await renderStoricoList();
+}
+
+function renderPesoTrend() {
+  const log = profile.pesolog || [];
+  const container = document.getElementById('peso-trend');
+  if (!log.length) { container.innerHTML = '<div style="font-size:12px;color:var(--text-lighter);padding:8px">Nessun dato peso ancora.</div>'; return; }
+  const last7 = log.slice(-7);
+  const vals = last7.map(e => e.kg);
+  const minV = Math.min(...vals) - 1;
+  const maxV = Math.max(...vals) + 1;
+  container.innerHTML = last7.map((e, i) => {
+    const h = ((e.kg - minV) / (maxV - minV)) * 50 + 10;
+    const d = new Date(e.data);
+    const label = d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }).replace(' ', '\n');
+    return `<div class="peso-bar-wrap">
+      <div style="font-size:9px;color:var(--text-lighter);text-align:center">${e.kg}</div>
+      <div class="peso-bar ${i === last7.length-1 ? 'current' : ''}" style="height:${h}px"></div>
+      <div class="peso-bar-label">${d.toLocaleDateString('it-IT',{day:'numeric',month:'short'})}</div>
+    </div>`;
+  }).join('');
+}
+
+async function renderStoricoList() {
+  const list = document.getElementById('storico-list');
+  list.innerHTML = '<div style="text-align:center;padding:20px"><div class="spinner" style="margin:0 auto"></div></div>';
+
+  // Carica dal backend
+  const logs = await loadStoricoFromBackend();
+
+  // Merge con localStorage per il giorno corrente
+  const t = today();
+  const localToday = localStorage.getItem('kira_today_' + t);
+  if (localToday) {
+    const lt = JSON.parse(localToday);
+    const eaten = lt.pasti.reduce((s,p)=>s+p.kcal,0);
+    const burned = lt.attivita.reduce((s,a)=>s+a.kcal,0);
+    const existing = logs.find(r => r.Data === t);
+    if (!existing && (eaten || burned)) {
+      logs.unshift({ Data: t, KcalAssunta: eaten, KcalBruciata: burned, Pasti: '' });
+    }
+  }
+
+  const giorni = logs.filter(g => g.KcalAssunta > 0 || g.KcalBruciata > 0)
+    .sort((a,b) => b.Data > a.Data ? 1 : -1)
+    .slice(0, 30);
+
+  if (!giorni.length) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><p>Nessun dato ancora.<br>Inizia oggi!</p></div>';
+    return;
+  }
+
+  list.innerHTML = giorni.map(g => {
+    const d = new Date(g.Data + 'T12:00:00');
+    const label = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+    const eaten = parseInt(g.KcalAssunta) || 0;
+    const burned = parseInt(g.KcalBruciata) || 0;
+    const diff = (eaten - burned) - profile.targetKcal;
+    const diffText = diff > 0 ? '+'+diff+' kcal' : diff+' kcal';
+    const diffColor = diff <= 0 ? 'var(--sage-dark)' : 'var(--terracotta)';
+    return '<div class="day-summary"><div><div class="day-date">'+label+'</div><div class="day-sub">'+burned+' kcal bruciate</div></div><div class="day-kcal-badge"><div class="day-kcal-num">'+eaten+'</div><div class="day-kcal-diff" style="color:'+diffColor+'">'+diffText+'</div></div></div>';
+  }).join('');
+}
+
+// ========== PROFILO ==========
+function renderProfilo() {
+  if (!profile) return;
+  document.getElementById('profile-name').textContent = profile.nome;
+
+  const stats = document.getElementById('profile-stats');
+  stats.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">${profile.pesoCorrente.toFixed(1)}</div>
+      <div class="stat-unit">kg</div>
+      <div class="stat-label">Peso attuale</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${profile.pesoTarget}</div>
+      <div class="stat-unit">kg</div>
+      <div class="stat-label">Obiettivo</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${profile.targetKcal}</div>
+      <div class="stat-unit">kcal</div>
+      <div class="stat-label">Target/giorno</div>
+    </div>
+  `;
+
+  const det = document.getElementById('profile-details');
+  det.innerHTML = `
+    <div class="cal-row"><div class="cal-label">Età</div><div class="cal-value">${profile.eta} anni</div></div>
+    <div class="cal-row"><div class="cal-label">Altezza</div><div class="cal-value">${profile.altezza} cm</div></div>
+    <div class="cal-row"><div class="cal-label">Metabolismo base (TDEE)</div><div class="cal-value">${profile.tdee} kcal</div></div>
+    <div class="cal-row"><div class="cal-label">Allattamento</div><div class="cal-value">${profile.allattando ? '✅ Sì (+450 kcal)' : '—'}</div></div>
+    <div class="cal-row"><div class="cal-label">Target acqua</div><div class="cal-value">${(profile.targetAcqua/1000).toFixed(1)} L</div></div>
+    ${profile.allattando && profile.fineAllatt ? `<div class="cal-row"><div class="cal-label">Fine allattamento</div><div class="cal-value">${profile.fineAllatt}</div></div>` : ''}
+  `;
+}
+
+// ========== PESO ==========
+function openPesoModal() {
+  document.getElementById('peso-modal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function savePeso() {
+  const val = parseFloat(document.getElementById('modal-peso').value);
+  if (!val) return;
+  profile.pesoCorrente = val;
+  if (!profile.pesolog) profile.pesolog = [];
+  const existing = profile.pesolog.findIndex(p => p.data === today());
+  if (existing >= 0) profile.pesolog[existing].kg = val;
+  else profile.pesolog.push({ data: today(), kg: val });
+  localStorage.setItem('kira_profile', JSON.stringify(profile));
+  savePesoToSheet(val);
+  closeModal('peso-modal');
+  renderStorico();
+  renderHome();
+}
+
+function updatePeso() {
+  const val = parseFloat(document.getElementById('update-peso').value);
+  if (!val) return;
+  profile.pesoCorrente = val;
+  if (!profile.pesolog) profile.pesolog = [];
+  const existing = profile.pesolog.findIndex(p => p.data === today());
+  if (existing >= 0) profile.pesolog[existing].kg = val;
+  else profile.pesolog.push({ data: today(), kg: val });
+  localStorage.setItem('kira_profile', JSON.stringify(profile));
+  savePesoToSheet(val);
+  document.getElementById('update-peso').value = '';
+  renderProfilo();
+  renderHome();
+  alert('Peso aggiornato! 🌸');
+}
+
+// ========== NURSING TRANSITION ==========
+function checkNursingTransition() {
+  if (!profile || !profile.allattando || !profile.fineAllatt) return;
+  const fine = new Date(profile.fineAllatt + '-01');
+  const oggi = new Date();
+  const diffDays = (fine - oggi) / (1000*60*60*24);
+  if (diffDays <= 14 && diffDays > 0) {
+    // Mostra notifica
+    const banner = document.createElement('div');
+    banner.className = 'notifica';
+    banner.innerHTML = `<div class="notifica-icon">🔔</div><div class="notifica-text"><strong>Fine allattamento tra ${Math.ceil(diffDays)} giorni</strong><span>Vuoi aggiornare il tuo piano nutrizionale?</span></div>`;
+    banner.onclick = () => {
+      if (confirm('Vuoi aggiornare il piano e rimuovere le calorie extra per allattamento?')) {
+        profile.allattando = false;
+        profile.targetKcal = Math.round(profile.tdee - 450 - 400);
+        profile.targetAcqua = 2000;
+        localStorage.setItem('kira_profile', JSON.stringify(profile));
+        renderHome();
+      }
+    };
+    document.getElementById('page-home').insertBefore(banner, document.querySelector('.greeting'));
+  } else if (diffDays <= 0) {
+    // Auto-proposta aggiornamento
+    const fine2 = new Date(profile.fineAllatt + '-01');
+    const oggi2 = new Date();
+    if (oggi2 > fine2 && profile.allattando) {
+      const banner = document.createElement('div');
+      banner.className = 'notifica';
+      banner.innerHTML = `<div class="notifica-icon">🌸</div><div class="notifica-text"><strong>Hai raggiunto la fine del periodo di allattamento</strong><span>Tocca qui per aggiornare il tuo piano</span></div>`;
+      banner.onclick = () => {
+        if (confirm('Aggiorno il piano: rimuovo le calorie extra per allattamento?')) {
+          profile.allattando = false;
+          profile.targetKcal = Math.round(profile.tdee - 450 - 400);
+          profile.targetAcqua = 2000;
+          localStorage.setItem('kira_profile', JSON.stringify(profile));
+          banner.remove();
+          renderHome();
+        }
+      };
+      document.getElementById('page-home').insertBefore(banner, document.querySelector('.greeting'));
+    }
+  }
+}
+
+// ========== VOICE ==========
+let recognition = null;
+
+function startVoice(targetId, btnId) {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Il riconoscimento vocale non è supportato su questo browser. Usa Safari su iPhone.');
+    return;
+  }
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (recognition) recognition.stop();
+  recognition = new SpeechRecognition();
+  recognition.lang = 'it-IT';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  if (btnId) document.getElementById(btnId)?.classList.add('recording');
+
+  recognition.onresult = (e) => {
+    let transcript = e.results[0][0].transcript;
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    if (target.type === 'number') {
+      const num = transcript.match(/\d+[\.,]?\d*/)?.[0]?.replace(',', '.');
+      if (num) target.value = num;
+    } else {
+      target.value = transcript;
+    }
+    if (btnId) document.getElementById(btnId)?.classList.remove('recording');
+    if (targetId === 'attivita-durata') updateActivityPreview();
+  };
+
+  recognition.onerror = () => {
+    if (btnId) document.getElementById(btnId)?.classList.remove('recording');
+  };
+
+  recognition.onend = () => {
+    if (btnId) document.getElementById(btnId)?.classList.remove('recording');
+  };
+
+  recognition.start();
+}
+
+// ========== BACKEND SAVE FUNCTIONS ==========
+async function saveProfileToSheet() {
+  await backendPost('saveProfile', {
+    nome: profile.nome,
+    eta: profile.eta,
+    altezza: profile.altezza,
+    pesoIniziale: profile.pesoIniziale,
+    pesoCorrente: profile.pesoCorrente,
+    pesoTarget: profile.pesoTarget,
+    dataTarget: profile.dataTarget,
+    allattando: profile.allattando,
+    fineAllatt: profile.fineAllatt || '',
+    tdee: profile.tdee,
+    targetKcal: profile.targetKcal
+  });
+}
+
+async function saveDayToBackend() {
+  const t = today();
+  const eaten = todayLog.pasti.reduce((s,p)=>s+p.kcal,0);
+  const burned = todayLog.attivita.reduce((s,a)=>s+a.kcal,0);
+  const pasti = todayLog.pasti.map(p=>p.tipo+':'+p.nome+'('+p.kcal+')').join(' | ');
+  const att = todayLog.attivita.map(a=>a.nome+' '+a.durata+'min('+a.kcal+')').join(' | ');
+  await backendPost('saveDay', {
+    data: t,
+    eaten, burned,
+    acqua: todayLog.acqua,
+    pasti, attivita: att,
+    pesoCorrente: profile.pesoCorrente
+  });
+}
+
+async function savePesoToSheet(val) {
+  await backendPost('savePeso', { data: today(), kg: val });
+}
+
+// ========== RESET ==========
+function resetApp() {
+  if (confirm('Sei sicura di voler reimpostare Kira? Tutti i dati locali verranno eliminati.')) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+// ========== STORICO DAL BACKEND ==========
+async function loadStoricoFromBackend() {
+  try {
+    const logs = await backendGet('getLogs');
+    return logs || [];
+  } catch(e) { return []; }
+}
+</script>
+</body>
+</html>
